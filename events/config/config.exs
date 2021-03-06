@@ -13,10 +13,10 @@ config :events,
 # Configures the endpoint
 config :events, EventsWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "PRtOvQt6SfdMLF7fL7wgaaVpBAufgCkcF8Vl00J05eByz3z9A94mUepEcYSuUFc/",
+  secret_key_base: "dRDnvU3m7nKcCQnEHcDf5v/ZUDg/DgATvEC2x6Kch0xyZ/w9ZKcS3Xa4JL7XF4OK",
   render_errors: [view: EventsWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Events.PubSub,
-  live_view: [signing_salt: "xlQA934W"]
+  live_view: [signing_salt: "Lqrd8vtp"]
 
 # Configures Elixir's Logger
 config :logger, :console,

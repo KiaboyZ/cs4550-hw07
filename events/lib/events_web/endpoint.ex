@@ -7,7 +7,7 @@ defmodule EventsWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_events_key",
-    signing_salt: "0aSoFuCy"
+    signing_salt: "Z/f7qBL2"
   ]
 
   socket "/socket", EventsWeb.UserSocket,

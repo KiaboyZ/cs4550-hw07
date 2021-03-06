@@ -1,3 +1,11 @@
+Attributions:
+- The majority of the code or the inspiration thereof comes from Nat Tuck's lecture notes:
+  - https://github.com/NatTuck/scratch-2021-01/blob/master/notes-4550/
+
+
+
+
+
 # Events
 
 To start your Phoenix server:

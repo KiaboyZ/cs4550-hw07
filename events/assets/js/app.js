@@ -13,3 +13,6 @@ import "../css/app.scss"
 //     import socket from "./socket"
 //
 import "phoenix_html"
+import flatpickr from "flatpickr"
+
+time_picker = flatpickr("pick_time", { enableTime: true, minDate: "today" });

@@ -3,7 +3,7 @@ use Mix.Config
 # Configure your database
 config :events, Events.Repo,
   username: "postgres",
-  password: "postgres",
+  password: "eidai4ein4Xo",
   database: "events_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
