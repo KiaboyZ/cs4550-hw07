@@ -4,7 +4,7 @@ defmodule Events.Repo.Migrations.CreatePosts do
   def change do
     create table(:posts) do
       add :name, :string, null: false
-      add :time, :Date, null: false
+      add :time, :utc_datetime, null: false
       add :description, :string, null: false
 
       timestamps()

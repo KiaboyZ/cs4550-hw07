@@ -31,7 +31,9 @@ defmodule Events.PostsTest do
 
     test "create_post/1 with valid data creates a post" do
       assert {:ok, %Post{} = post} = Posts.create_post(@valid_attrs)
-      assert post.body == "some body"
+      assert post.name == "some name"
+      assert post.time == "some time"
+      assert post.description == "some description"
     end
 
     test "create_post/1 with invalid data returns error changeset" do
@@ -41,7 +43,9 @@ defmodule Events.PostsTest do
     test "update_post/2 with valid data updates the post" do
       post = post_fixture()
       assert {:ok, %Post{} = post} = Posts.update_post(post, @update_attrs)
-      assert post.body == "some updated body"
+      assert post.name == "some updated name"
+      assert post.time == "some updated time"
+      assert post.description == "some updated description"
     end
 
     test "update_post/2 with invalid data returns error changeset" do

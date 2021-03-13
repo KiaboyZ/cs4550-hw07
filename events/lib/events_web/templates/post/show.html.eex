@@ -6,5 +6,7 @@
 <h1>Show Event #<%= @post.id %></h1>
 
 <div>
-  <%= @post.body %>
+  <p class="card-text"><b>Event: </b><%= @post.name %></p>
+  <p class="card-text"><b>Time: </b><%= @post.time %></p>
+  <p class="card-text"><b>Description: </b><%= @post.description %></p>
 </div>

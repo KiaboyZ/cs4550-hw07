@@ -4,7 +4,7 @@ defmodule Events.Posts.Post do
 
   schema "posts" do
     field :name, :string
-    field :time, :date
+    field :time, :utc_datetime
     field :description, :string
 
     timestamps()

@@ -15,4 +15,4 @@ import "../css/app.scss"
 import "phoenix_html"
 import flatpickr from "flatpickr"
 
-time_picker = flatpickr("pick_time", { enableTime: true, minDate: "today" });
+time_picker = flatpickr("#pick_time", { enableTime: true, minDate: "today" });

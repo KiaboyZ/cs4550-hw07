@@ -10,6 +10,9 @@ if [ ! -e "$CFGD/base" ]; then
     exit 1
 fi
 
+DB_PASS=$(cat "$CFGD/db_pass")
+export DATABASE_URL=ecto://events:eidai4ein4Xo@localhost/events_prod
+
 SECRET_KEY_BASE=$(cat "$CFGD/base")
 export SECRET_KEY_BASE
 

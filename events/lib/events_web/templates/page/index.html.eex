@@ -12,7 +12,9 @@
       <img class="card-img-top" src="" alt="">
       -->
       <div class="card-body">
-        <p class="card-text"><%= post.body %></p>
+        <p class="card-text"><b>Event: </b><%= post.name %></p>
+        <p class="card-text"><b>Time: </b><%= post.time %></p>
+        <p class="card-text"><b>Description: </b><%= post.description %></p>
         <%= link "view", to: Routes.post_path(@conn, :show, post) %>
       </div>
     </div>
