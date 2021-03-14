@@ -19,6 +19,7 @@ defmodule Events.Posts do
   """
   def list_posts do
     Repo.all(Post)
+    |> Repo.preload(:user)
   end
 
   @doc """
@@ -101,4 +102,13 @@ defmodule Events.Posts do
   def change_post(%Post{} = post, attrs \\ %{}) do
     Post.changeset(post, attrs)
   end
+
+  def load_comments(%Post{} = post) do
+    Repo.preload(post, [comments: :user])
+  end
+
+  def load_invites(%Post{} = post) do
+    Repo.preload(post, [invites: :post])
+  end
+  
 end

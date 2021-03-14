@@ -1,12 +1,120 @@
-<p>
-  <span><%= link "Edit", to: Routes.post_path(@conn, :edit, @post) %></span>
-  <span><%= link "Back", to: Routes.post_path(@conn, :index) %></span>
-</p>
+<h1>Show Event: <%= @post.name %></h1>
 
-<h1>Show Event #<%= @post.id %></h1>
+<%= if is_invited_or_host?(@conn, @post.user_id, @post.invites) do %>
 
 <div>
-  <p class="card-text"><b>Event: </b><%= @post.name %></p>
+  <p class="card-text"><b>Hosted by: </b><%= get_name(@post.user_id) %></p>
   <p class="card-text"><b>Time: </b><%= @post.time %></p>
   <p class="card-text"><b>Description: </b><%= @post.description %></p>
 </div>
+<br>
+<p>
+  <%= if current_user_id?(@conn, @post.user_id) do %>
+          <span><%= link "Edit", to: Routes.post_path(@conn, :edit, @post) %></span>
+  <% end %>
+  <span><%= link "Back", to: Routes.post_path(@conn, :index) %></span>
+</p>
+
+<br>
+
+<%= if is_host?(@conn, @post.user_id) do %>
+  <h2>New Invite </h2>
+  <p><b>Shareable Invite Link:</b> http://events.kia.town/posts/<%= @post.id %></p>
+  <%= if have_current_user?(@conn) do %>
+    <%= render(
+      EventsWeb.InviteView,
+      "form.html",
+      changeset: @new_invite,
+      action: Routes.invite_path(@conn, :create)
+    ) %>
+  <% end %>
+<% end %>
+
+<%= if is_invited?(@conn, @post.invites) do %>
+  <h2>Respond to Invite</h2>
+  <%= for invite <- @post.invites do %>
+    <%= if check_this_invite(Events.Users.get_email_by_user_id(@conn.assigns[:current_user].id), invite) do %>
+      <%= link "Update Response", to: Routes.invite_path(@conn, :edit, invite) %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<br><br>
+
+<h2>Invite List</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Response</th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for invite <- @post.invites do %>
+    <tr>
+      <td><%= invite.email %></td>
+      <td><%= invite.response %></td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<br>
+
+<h2>Current Responses</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Yes</th>
+      <th>No</th>
+      <th>Maybe</th>
+      <th>No Response</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= yes(@post.invites) %></td>
+      <td><%= no(@post.invites) %></td>
+      <td><%= maybe(@post.invites) %></td>
+      <td><%= no_response(@post.invites) %></td>
+    </tr>
+  </tbody>
+</table>
+
+<br>
+
+<h2>Add Comment</h2>
+
+<%= if have_current_user?(@conn) do %>
+  <%= render(
+    EventsWeb.CommentView,
+    "form.html",
+    changeset: @new_comment,
+    action: Routes.comment_path(@conn, :create)
+  ) %>
+<% end %>
+
+<br>
+
+<h2>Comments</h2>
+
+<%= for comm <- @post.comments do %>
+  <div class="card">
+    <div class="card-body">
+      <img src="<%= Routes.user_path(@conn, :photo, comm.user) %>" class="rounded float-left" height="100" alt="" >
+      <span><b>Comment from </b><%= comm.user.name %></span>
+      <br>
+      <span class="card-text"><%= comm.body %></span>
+      <br>
+      <%= if can_delete?(@conn, @post.user_id, comm.user_id) do %>
+        <span class="float-right"><%= link "Delete Comment", to: Routes.comment_path(@conn, :delete, comm) %></span>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<br>
+
+<% else %>
+  <p>Uhhh, I don't think you were invited :/</p>
+<% end %>

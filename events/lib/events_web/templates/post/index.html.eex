@@ -1,10 +1,18 @@
-<h1>Listing Posts</h1>
+<h1>All Events</h1>
 
-<table>
+<%= if have_current_user?(@conn) do %>
+  <span><%= link "Create New Event", to: Routes.post_path(@conn, :new) %></span>
+<% else %>
+  <span>Log in if you want to create a new event.</span>
+<% end %>
+
+<table class="table">
   <thead>
     <tr>
-      <th>Posts</th>
-
+      <th>Event</th>
+      <th>Time</th>
+      <th>Description</th>
+      <th>Host</th>
       <th></th>
     </tr>
   </thead>
@@ -14,15 +22,14 @@
       <td><%= post.name %></td>
       <td><%= post.time %></td>
       <td><%= post.description %></td>
-
+      <td><%= post.user.name %></td>
       <td>
         <span><%= link "Show", to: Routes.post_path(@conn, :show, post) %></span>
-        <span><%= link "Edit", to: Routes.post_path(@conn, :edit, post) %></span>
-        <span><%= link "Delete", to: Routes.post_path(@conn, :delete, post), method: :delete, data: [confirm: "Are you sure?"] %></span>
+        <%= if current_user_id?(@conn, post.user_id) do %>
+          <span><%= link "Edit", to: Routes.post_path(@conn, :edit, post) %></span>
+        <% end %>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
-
-<span><%= link "New Post", to: Routes.post_path(@conn, :new) %></span>

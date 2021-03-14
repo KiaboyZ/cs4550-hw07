@@ -9,3 +9,21 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+
+alias Events.Repo
+alias Events.Users.User
+alias Events.Posts.Post
+alias Events.Photos
+
+defmodule Inject do
+    def photo(name) do
+      photos = Application.app_dir(:events, "priv/photos")
+      path = Path.join(photos, name)
+      {:ok, hash} = Photos.save_photo(name, path)
+      hash
+    end
+  end
+  
+cowboy = Inject.photo("cowboy.png")
+
+kia = Repo.insert!(%User{name: "kia", email: "zafar.k@northeastern.edu", photo_hash: cowboy})

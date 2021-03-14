@@ -3,6 +3,11 @@ defmodule EventsWeb.PostController do
 
   alias Events.Posts
   alias Events.Posts.Post
+  alias Events.Users
+  alias EventsWeb.Plugs
+  plug Plugs.RequireUser when action in [:new, :edit, :create, :update]
+  plug :fetch_post when action in [:show, :edit, :update, :delete]
+  plug :require_owner when action in [:edit, :update, :delete]
 
   def index(conn, _params) do
     posts = Posts.list_posts()
@@ -15,6 +20,9 @@ defmodule EventsWeb.PostController do
   end
 
   def create(conn, %{"post" => post_params}) do
+    post_params = post_params
+    |> Map.put("user_id", conn.assigns[:current_user].id)
+
     case Posts.create_post(post_params) do
       {:ok, post} ->
         conn
@@ -26,18 +34,37 @@ defmodule EventsWeb.PostController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    post = Posts.get_post!(id)
-    render(conn, "show.html", post: post)
+  def show(conn, %{"id" => _id}) do
+    post = conn.assigns[:post]
+    |> Posts.load_comments()
+    |> Posts.load_invites()
+
+    comm = %Events.Comments.Comment{
+      post_id: post.id,
+      user_id: current_user_id(conn)
+    }
+
+    invite = %Events.Invites.Invite{
+      response: "No response",
+      post_id: post.id,
+      email: nil
+    }
+
+
+    new_comment = Events.Comments.change_comment(comm)
+    new_invite = Events.Invites.change_invite(invite)
+    render(conn, "show.html", post: post, new_comment: new_comment, new_invite: new_invite)
   end
 
   def edit(conn, %{"id" => id}) do
+    post = conn.assigns[:post]
     post = Posts.get_post!(id)
     changeset = Posts.change_post(post)
     render(conn, "edit.html", post: post, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "post" => post_params}) do
+    post = conn.assigns[:post]
     post = Posts.get_post!(id)
 
     case Posts.update_post(post, post_params) do
@@ -52,6 +79,7 @@ defmodule EventsWeb.PostController do
   end
 
   def delete(conn, %{"id" => id}) do
+    post = conn.assigns[:post]
     post = Posts.get_post!(id)
     {:ok, _post} = Posts.delete_post(post)
 
@@ -59,4 +87,25 @@ defmodule EventsWeb.PostController do
     |> put_flash(:info, "Post deleted successfully.")
     |> redirect(to: Routes.post_path(conn, :index))
   end
+
+  def fetch_post(conn, _args) do
+    id = conn.params["id"]
+    post = Posts.get_post!(id)
+    assign(conn, :post, post)
+  end
+
+  def require_owner(conn, _args) do
+    user = conn.assigns[:current_user]
+    post = conn.assigns[:post]
+
+    if user.id == post.user_id do
+      conn
+    else
+      conn
+      |> put_flash(:error, "That isn't yours.")
+      |> redirect(to: Routes.page_path(conn, :index))
+      |> halt()
+    end
+  end
+  
 end
